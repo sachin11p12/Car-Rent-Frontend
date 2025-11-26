@@ -1,16 +1,40 @@
-# React + Vite
+# 🚗 Car Rental System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern and fully responsive **Car Rental & Booking System UI** built using **Vite + React + JavaScript + Tailwind CSS**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 Project Overview
 
-## React Compiler
+This project allows users to browse available cars, view car details, and book rentals with a smooth and interactive UI.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ⚙️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Technology | Usage |
+|-----------|-------|
+| Vite | Fast build tool & dev server |
+| React.js | Frontend UI framework |
+| JavaScript | Core programming language |
+| Tailwind CSS | Styling framework |
+
+---
+
+## ✨ Features
+
+✅ Browse and search cars  
+✅ View car details  
+✅ Car rental booking UI  
+✅ Fully responsive design  
+✅ Fast performance with Vite  
+✅ Styled using Tailwind CSS  
+
+---
+Screenshots
+
+![Screenshot_26-11-2025_133040_localhost](https://github.com/user-attachments/assets/4134e4cc-6f9d-41db-8adc-bb7b253a8cc3)
+<img width="1905" height="988" alt="Screenshot 2025-11-26 133103" src="https://github.com/user-attachments/assets/1d632ef5-6de7-4bcb-9f25-05065b4c1f46" />
+<img width="1896" height="968" alt="Screenshot 2025-11-26 133310" src="https://github.com/user-attachments/assets/879bcf51-46e0-429c-80c8-8661a8d6f559" />
+
+
