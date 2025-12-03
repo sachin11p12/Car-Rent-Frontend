@@ -23,12 +23,12 @@ This project allows users to browse available cars, view car details, and book r
 
 ## ✨ Features
 
-✅ Browse and search cars  
-✅ View car details  
-✅ Car rental booking UI  
-✅ Fully responsive design  
-✅ Fast performance with Vite  
-✅ Styled using Tailwind CSS  
+Browse and search cars  
+ View car details  
+ Car rental booking UI  
+ Fully responsive design  
+ Fast performance with Vite  
+ Styled using Tailwind CSS  
 
 ---
 Screenshots
