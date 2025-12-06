@@ -1,10 +1,10 @@
-# 🚗 Car Rental System
+#  Car Rental System
 
 A modern and fully responsive **Car Rental & Booking System UI** built using **Vite + React + JavaScript + Tailwind CSS**.
 
 ---
 
-## 🎯 Project Overview
+##  Project Overview
 
 This project allows users to browse available cars, view car details, and book rentals with a smooth and interactive UI..backen in springboot 
 
