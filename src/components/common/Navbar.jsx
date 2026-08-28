@@ -42,7 +42,7 @@ export const Navbar = () => {
           >
             <div className="bg-[#008a00] hover:bg-[#007500] transition-colors px-4 py-2 rounded-sm flex flex-col items-center justify-center shadow-sm">
               <span className="text-white font-extrabold italic text-lg tracking-tight leading-none">
-                Europcar
+                IndieCar
               </span>
               <div className="w-full h-0.5 bg-[#FFCC00] mt-0.5 rounded-full"></div>
             </div>
