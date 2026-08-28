@@ -31,12 +31,12 @@ export const Home = () => {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
+      <section className="relative bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 text-white pb-28 pt-16 md:pt-20 md:pb-36 overflow-visible">
         {/* Ambient subtle glow effects */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="relative container mx-auto px-4 py-16 md:py-20">
+        <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 text-white">
               Rent Premium Cars <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-emerald-400">Across India</span>
@@ -47,7 +47,7 @@ export const Home = () => {
           </div>
 
           {/* Hero Search & Booking Widget */}
-          <div className="relative z-10">
+          <div className="relative z-30">
             <HeroSearchWidget />
           </div>
         </div>

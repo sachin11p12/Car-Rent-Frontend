@@ -512,7 +512,7 @@ export const HeroSearchWidget = () => {
 
             {/* 2-Month Dual Calendar Floating Modal */}
             {showCalendar && (
-              <div className="absolute z-50 top-full left-0 right-0 sm:-left-12 sm:right-auto sm:w-[620px] mt-2">
+              <div className="absolute z-[100] top-full left-0 right-0 sm:-left-12 sm:right-auto sm:w-[620px] mt-2">
                 <DualMonthCalendar
                   pickupDate={pickupDate}
                   returnDate={returnDate}

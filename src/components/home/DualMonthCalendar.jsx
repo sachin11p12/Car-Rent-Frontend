@@ -171,8 +171,8 @@ export const DualMonthCalendar = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-2xl border border-gray-200 p-3 select-none animate-in fade-in zoom-in-95 duration-150">
-      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100">
+    <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 pb-6 select-none animate-in fade-in zoom-in-95 duration-150 relative z-[100]">
+      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100 gap-2 md:gap-0">
         {renderMonth(currentMonth, true)}
         {renderMonth(nextMonth, false)}
       </div>
