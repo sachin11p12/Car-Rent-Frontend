@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   format, 
   addMonths, 
@@ -9,7 +9,8 @@ import {
   isSameDay, 
   isBefore, 
   startOfDay, 
-  isAfter 
+  isAfter,
+  addDays
 } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -21,16 +22,31 @@ export const DualMonthCalendar = ({
   onSelectPickupDate,
   onSelectReturnDate,
   activeField = 'pickup', // 'pickup' | 'return'
-  setActiveField,
   onClose
 }) => {
-  // Current view base month (left month)
+  const today = startOfDay(new Date());
+
+  // Determine initial month based on active field
   const [currentMonth, setCurrentMonth] = useState(() => {
-    return pickupDate ? startOfMonth(pickupDate) : startOfMonth(new Date());
+    if (activeField === 'return' && returnDate) {
+      return startOfMonth(returnDate);
+    }
+    if (pickupDate) {
+      return startOfMonth(pickupDate);
+    }
+    return startOfMonth(today);
   });
 
+  // Sync current month when activeField changes
+  useEffect(() => {
+    if (activeField === 'return' && returnDate) {
+      setCurrentMonth(startOfMonth(returnDate));
+    } else if (activeField === 'pickup' && pickupDate) {
+      setCurrentMonth(startOfMonth(pickupDate));
+    }
+  }, [activeField, pickupDate, returnDate]);
+
   const nextMonth = addMonths(currentMonth, 1);
-  const today = startOfDay(new Date());
 
   const handlePrevMonth = () => {
     setCurrentMonth(prev => subMonths(prev, 1));
@@ -41,31 +57,20 @@ export const DualMonthCalendar = ({
   };
 
   const handleDateClick = (day) => {
-    if (isBefore(day, today)) return;
-
     if (activeField === 'pickup') {
+      if (isBefore(day, today)) return;
       onSelectPickupDate(day);
-      // Automatically switch focus to return date selection
+      // If existing returnDate is before the newly selected pickupDate, push returnDate forward
       if (returnDate && isBefore(returnDate, day)) {
-        onSelectReturnDate(addMonths(day, 0)); // reset or adjust
+        onSelectReturnDate(addDays(day, 3));
       }
-      if (setActiveField) {
-        setActiveField('return');
-      }
+      if (onClose) onClose();
     } else {
-      // return date selection
-      if (pickupDate && isBefore(day, pickupDate)) {
-        // If clicked date is before pickup, make it the new pickup
-        onSelectPickupDate(day);
-        if (setActiveField) {
-          setActiveField('return');
-        }
-      } else {
-        onSelectReturnDate(day);
-        if (onClose) {
-          onClose();
-        }
-      }
+      // return date mode
+      const minReturnDate = pickupDate ? startOfDay(pickupDate) : today;
+      if (isBefore(day, minReturnDate)) return;
+      onSelectReturnDate(day);
+      if (onClose) onClose();
     }
   };
 
@@ -75,7 +80,7 @@ export const DualMonthCalendar = ({
     const monthEnd = endOfMonth(monthDate);
     const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-    // Calculate Monday-based offset (0 for Mon, 6 for Sun)
+    // Monday-based offset (0 for Mon, 6 for Sun)
     const startDayIndex = (monthStart.getDay() + 6) % 7;
     const blankDays = Array.from({ length: startDayIndex });
 
@@ -129,11 +134,17 @@ export const DualMonthCalendar = ({
           ))}
 
           {daysInMonth.map((day) => {
-            const isPast = isBefore(day, today);
             const isPickup = pickupDate && isSameDay(day, pickupDate);
             const isReturn = returnDate && isSameDay(day, returnDate);
             const isInRange = pickupDate && returnDate && isAfter(day, pickupDate) && isBefore(day, returnDate);
             const dayNumberStr = format(day, 'dd');
+
+            // Disable conditions
+            const isPastToday = isBefore(day, today);
+            const isBeforePickup = activeField === 'return' && pickupDate && isBefore(day, startOfDay(pickupDate));
+            const isDisabled = isPastToday || isBeforePickup;
+
+            const isCurrentActiveSelected = (activeField === 'pickup' && isPickup) || (activeField === 'return' && isReturn);
 
             let containerBg = '';
             if (isInRange) {
@@ -149,13 +160,13 @@ export const DualMonthCalendar = ({
                 <button
                   type="button"
                   onClick={() => handleDateClick(day)}
-                  disabled={isPast}
+                  disabled={isDisabled}
                   className={`w-8 h-8 flex items-center justify-center text-xs font-semibold rounded-md transition-all ${
-                    isPickup || isReturn
+                    isCurrentActiveSelected || isPickup || isReturn
                       ? 'bg-[#15803d] text-white font-bold shadow-sm z-10'
                       : isInRange
                       ? 'text-gray-900 hover:bg-green-200'
-                      : isPast
+                      : isDisabled
                       ? 'text-gray-300 cursor-not-allowed'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer'
                   }`}

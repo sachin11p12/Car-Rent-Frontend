@@ -512,12 +512,15 @@ export const HeroSearchWidget = () => {
 
             {/* 2-Month Dual Calendar Floating Modal */}
             {showCalendar && (
-              <div className="absolute z-[100] top-full left-0 right-0 sm:-left-12 sm:right-auto sm:w-[620px] mt-2">
+              <div 
+                className={`absolute z-[100] top-full mt-2 w-full sm:w-[620px] ${
+                  activeDateField === 'return' ? 'sm:right-0 sm:left-auto' : 'sm:left-0 sm:right-auto'
+                }`}
+              >
                 <DualMonthCalendar
                   pickupDate={pickupDate}
                   returnDate={returnDate}
                   activeField={activeDateField}
-                  setActiveField={setActiveDateField}
                   onSelectPickupDate={(date) => {
                     setPickupDate(date);
                   }}
