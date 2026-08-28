@@ -538,55 +538,10 @@ export const HeroSearchWidget = () => {
                 <ChevronDown className="w-4 h-4 text-gray-700 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
-
-            {/* Negotiated Rate Checkbox with Tooltip */}
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={hasNegotiatedRate}
-                  onChange={(e) => setHasNegotiatedRate(e.target.checked)}
-                  className="w-4 h-4 text-green-700 rounded border-gray-300 focus:ring-green-600 accent-green-700"
-                />
-                <span>I have a <strong className="font-semibold text-gray-900">negotiated rate</strong></span>
-              </label>
-
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowInfoTooltip(!showInfoTooltip)}
-                  onMouseEnter={() => setShowInfoTooltip(true)}
-                  onMouseLeave={() => setShowInfoTooltip(false)}
-                  className="text-gray-400 hover:text-gray-600 focus:outline-none"
-                  aria-label="Information about negotiated rates"
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                {showInfoTooltip && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2.5 bg-gray-900 text-white text-xs rounded-md shadow-xl z-50">
-                    Enter your corporate, club membership, or customer loyalty discount code to unlock contract rates.
-                  </div>
-                )}
-              </div>
-            </div>
-
           </div>
 
           {/* Right Action: Search CTA Button */}
           <div className="flex items-center gap-3">
-            {/* Negotiated Rate Code Input (Revealed when checked) */}
-            {hasNegotiatedRate && (
-              <div className="relative animate-in fade-in duration-200">
-                <input
-                  type="text"
-                  value={negotiatedCode}
-                  onChange={(e) => setNegotiatedCode(e.target.value)}
-                  placeholder="Promo / Corporate Code"
-                  className="text-sm px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 w-44 uppercase"
-                />
-              </div>
-            )}
-
             <button
               type="button"
               onClick={handleSearch}
@@ -596,9 +551,7 @@ export const HeroSearchWidget = () => {
               <span>Search</span>
             </button>
           </div>
-
         </div>
-
       </div>
 
       {/* Promotion Footer Banner Bar */}
