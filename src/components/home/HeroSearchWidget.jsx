@@ -7,17 +7,15 @@ import {
   Calendar as CalendarIcon, 
   Clock, 
   ChevronDown, 
-  Info, 
   Search, 
   Volume2, 
   Check,
   X
 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { format, addDays } from 'date-fns';
+import { DualMonthCalendar } from './DualMonthCalendar';
 
-// Indian States and Union Territories (Sorted)
+// Indian States and Union Territories
 export const INDIAN_STATES = [
   'Andaman and Nicobar Islands',
   'Andhra Pradesh',
@@ -113,12 +111,13 @@ export const HeroSearchWidget = () => {
 
   // Date & Time State
   const [pickupDate, setPickupDate] = useState(new Date());
-  const [returnDate, setReturnDate] = useState(addDays(new Date(), 3));
+  const [returnDate, setReturnDate] = useState(addDays(new Date(), 4));
   const [pickupTime, setPickupTime] = useState('10:00');
   const [returnTime, setReturnTime] = useState('10:00');
 
-  const [pickupCalendarOpen, setPickupCalendarOpen] = useState(false);
-  const [returnCalendarOpen, setReturnCalendarOpen] = useState(false);
+  // 2-Month Calendar Window State
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [activeDateField, setActiveDateField] = useState('pickup'); // 'pickup' | 'return'
 
   // Bottom Row Preferences (Age & State)
   const [driverAge, setDriverAge] = useState('26+');
@@ -128,12 +127,9 @@ export const HeroSearchWidget = () => {
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [stateSearchQuery, setStateSearchQuery] = useState('');
 
-  const [hasNegotiatedRate, setHasNegotiatedRate] = useState(false);
-  const [negotiatedCode, setNegotiatedCode] = useState('');
-  const [showInfoTooltip, setShowInfoTooltip] = useState(false);
-
   const locationRef = useRef(null);
   const returnLocationRef = useRef(null);
+  const dateContainerRef = useRef(null);
   const ageRef = useRef(null);
   const stateRef = useRef(null);
   const ageListRef = useRef(null);
@@ -146,6 +142,9 @@ export const HeroSearchWidget = () => {
       }
       if (returnLocationRef.current && !returnLocationRef.current.contains(e.target)) {
         setShowReturnDropdown(false);
+      }
+      if (dateContainerRef.current && !dateContainerRef.current.contains(e.target)) {
+        setShowCalendar(false);
       }
       if (ageRef.current && !ageRef.current.contains(e.target)) {
         setShowAgeDropdown(false);
@@ -211,9 +210,6 @@ export const HeroSearchWidget = () => {
     params.set('vehicleType', vehicleType);
     params.set('age', driverAge);
     params.set('state', selectedState);
-    if (hasNegotiatedRate && negotiatedCode) {
-      params.set('rateCode', negotiatedCode);
-    }
 
     navigate(`/cars?${params.toString()}`);
   };
@@ -415,121 +411,129 @@ export const HeroSearchWidget = () => {
             </div>
           </div>
 
-          {/* Pickup Date and Time Box */}
-          <div className={`${sameReturnLocation ? 'lg:col-span-3' : 'lg:col-span-6'}`}>
-            <label className="block text-sm font-bold text-gray-900 mb-2">
-              Pickup date and time
-            </label>
-            <div className="flex items-center border-2 border-gray-300 rounded-lg bg-white overflow-hidden focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100">
+          {/* Dates Section (Pickup + Return + 2-Month Dual Calendar Popup) */}
+          <div 
+            className={`${sameReturnLocation ? 'lg:col-span-6' : 'lg:col-span-12'} relative`} 
+            ref={dateContainerRef}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
-              {/* Date Part with Popover */}
-              <Popover open={pickupCalendarOpen} onOpenChange={setPickupCalendarOpen}>
-                <PopoverTrigger asChild>
+              {/* Pickup Date & Time Box */}
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">
+                  Pickup date and time
+                </label>
+                <div 
+                  className={`flex items-center border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                    showCalendar && activeDateField === 'pickup'
+                      ? 'border-green-600 ring-2 ring-green-100'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
                   <button
                     type="button"
-                    className="flex-1 flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setActiveDateField('pickup');
+                      setShowCalendar(true);
+                      setShowAgeDropdown(false);
+                      setShowStateDropdown(false);
+                    }}
+                    className="flex-1 flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
                   >
                     <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
                     <span className="text-sm font-medium text-gray-900 truncate">
                       {pickupDate ? format(pickupDate, 'MMM d, yyyy') : 'Pickup date'}
                     </span>
                   </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50 bg-white" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={pickupDate}
-                    onSelect={(date) => {
-                      if (date) {
-                        setPickupDate(date);
-                        // If returnDate is before new pickupDate, adjust return date
-                        if (returnDate && returnDate < date) {
-                          setReturnDate(addDays(date, 3));
-                        }
-                        setPickupCalendarOpen(false);
-                      }
-                    }}
-                    disabled={{ before: new Date() }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
 
-              {/* Time Part Dropdown */}
-              <div className="relative w-28 shrink-0">
-                <select
-                  value={pickupTime}
-                  onChange={(e) => setPickupTime(e.target.value)}
-                  className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
-                >
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <div className="relative w-24 shrink-0">
+                    <select
+                      value={pickupTime}
+                      onChange={(e) => setPickupTime(e.target.value)}
+                      className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
+                    >
+                      {TIME_SLOTS.map((slot) => (
+                        <option key={slot} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Return Date and Time Box */}
-          <div className={`${sameReturnLocation ? 'lg:col-span-3' : 'lg:col-span-6'}`}>
-            <label className="block text-sm font-bold text-gray-900 mb-2">
-              Return date and time
-            </label>
-            <div className="flex items-center border-2 border-gray-300 rounded-lg bg-white overflow-hidden focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100">
-              
-              {/* Return Date Part with Popover */}
-              <Popover open={returnCalendarOpen} onOpenChange={setReturnCalendarOpen}>
-                <PopoverTrigger asChild>
+              {/* Return Date & Time Box */}
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">
+                  Return date and time
+                </label>
+                <div 
+                  className={`flex items-center border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                    showCalendar && activeDateField === 'return'
+                      ? 'border-green-600 ring-2 ring-green-100'
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
                   <button
                     type="button"
-                    className="flex-1 flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
+                    onClick={() => {
+                      setActiveDateField('return');
+                      setShowCalendar(true);
+                      setShowAgeDropdown(false);
+                      setShowStateDropdown(false);
+                    }}
+                    className="flex-1 flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
                   >
                     <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
                     <span className="text-sm font-medium text-gray-900 truncate">
                       {returnDate ? format(returnDate, 'MMM d, yyyy') : 'Return date'}
                     </span>
                   </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50 bg-white" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={returnDate}
-                    onSelect={(date) => {
-                      if (date) {
-                        setReturnDate(date);
-                        setReturnCalendarOpen(false);
-                      }
-                    }}
-                    disabled={{ before: pickupDate || new Date() }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
 
-              {/* Time Part Dropdown */}
-              <div className="relative w-28 shrink-0">
-                <select
-                  value={returnTime}
-                  onChange={(e) => setReturnTime(e.target.value)}
-                  className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
-                >
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <div className="relative w-24 shrink-0">
+                    <select
+                      value={returnTime}
+                      onChange={(e) => setReturnTime(e.target.value)}
+                      className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
+                    >
+                      {TIME_SLOTS.map((slot) => (
+                        <option key={slot} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
               </div>
+
             </div>
+
+            {/* 2-Month Dual Calendar Floating Modal */}
+            {showCalendar && (
+              <div className="absolute z-50 top-full left-0 right-0 sm:-left-12 sm:right-auto sm:w-[620px] mt-2">
+                <DualMonthCalendar
+                  pickupDate={pickupDate}
+                  returnDate={returnDate}
+                  activeField={activeDateField}
+                  setActiveField={setActiveDateField}
+                  onSelectPickupDate={(date) => {
+                    setPickupDate(date);
+                  }}
+                  onSelectReturnDate={(date) => {
+                    setReturnDate(date);
+                  }}
+                  onClose={() => setShowCalendar(false)}
+                />
+              </div>
+            )}
+
           </div>
 
         </div>
 
-        {/* Row 3: Age (9-window), Indian State (20-window), Negotiated Rate, Search CTA */}
+        {/* Row 3: Age (9-window), Indian State (20-window), Search CTA */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2 border-t border-gray-100">
           
           {/* Left Controls: Custom Age & State Windows */}
@@ -542,6 +546,7 @@ export const HeroSearchWidget = () => {
                 onClick={() => {
                   setShowAgeDropdown(!showAgeDropdown);
                   setShowStateDropdown(false);
+                  setShowCalendar(false);
                 }}
                 className="flex items-center gap-1 text-sm cursor-pointer group focus:outline-none select-none"
               >
@@ -589,6 +594,7 @@ export const HeroSearchWidget = () => {
                 onClick={() => {
                   setShowStateDropdown(!showStateDropdown);
                   setShowAgeDropdown(false);
+                  setShowCalendar(false);
                 }}
                 className="flex items-center gap-1 text-sm cursor-pointer group focus:outline-none select-none"
               >
@@ -657,23 +663,11 @@ export const HeroSearchWidget = () => {
                 </div>
               )}
             </div>
+
           </div>
 
           {/* Right Action: Search CTA Button */}
           <div className="flex items-center gap-3">
-            {/* Negotiated Rate Code Input (Revealed when checked) */}
-            {hasNegotiatedRate && (
-              <div className="relative animate-in fade-in duration-200">
-                <input
-                  type="text"
-                  value={negotiatedCode}
-                  onChange={(e) => setNegotiatedCode(e.target.value)}
-                  placeholder="Corporate Code"
-                  className="text-sm px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 w-40 uppercase"
-                />
-              </div>
-            )}
-
             <button
               type="button"
               onClick={handleSearch}
