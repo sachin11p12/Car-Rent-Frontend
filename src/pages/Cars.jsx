@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CarGrid } from '@/components/car/CarGrid';
 import { CarFilters } from '@/components/car/CarFilters';
 import { SortOptions } from '@/components/car/SortOptions';
@@ -7,26 +8,45 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, Car } from 'lucide-react';
 
 export const Cars = () => {
+  const [searchParams] = useSearchParams();
+  const queryLocation = searchParams.get('location') || searchParams.get('search') || '';
+  const queryVehicleType = searchParams.get('vehicleType');
+  const initialType = queryVehicleType === 'Vans & Trucks' ? 'SUV' : (searchParams.get('type') || 'all');
+
   const [filters, setFilters] = useState({
-    search: '',
+    search: queryLocation,
     category: 'all',
-    type: 'all',
+    type: initialType,
     priceRange: [0, 20000]
   });
+
+  // Sync state if URL query params change
+  useEffect(() => {
+    if (queryLocation || queryVehicleType) {
+      setFilters(prev => ({
+        ...prev,
+        search: queryLocation || prev.search,
+        type: queryVehicleType === 'Vans & Trucks' ? 'SUV' : prev.type
+      }));
+    }
+  }, [queryLocation, queryVehicleType]);
 
   const [sortBy, setSortBy] = useState('featured');
 
   // Filter cars based on filters
   const filteredCars = useMemo(() => {
     let filtered = carsData.filter(car => {
-      const matchesSearch = !filters.search || 
-        car.name.toLowerCase().includes(filters.search.toLowerCase());
+      const searchTerm = filters.search.toLowerCase().trim();
+      const matchesSearch = !searchTerm || 
+        car.name.toLowerCase().includes(searchTerm) ||
+        (car.location && car.location.toLowerCase().includes(searchTerm)) ||
+        (car.category && car.category.toLowerCase().includes(searchTerm));
       
       const matchesCategory = filters.category === 'all' || 
         car.category.toLowerCase() === filters.category.toLowerCase();
       
       const matchesType = filters.type === 'all' || 
-        car.type === filters.type;
+        car.type.toLowerCase() === filters.type.toLowerCase();
       
       const matchesPrice = car.price >= filters.priceRange[0] && 
         car.price <= filters.priceRange[1];

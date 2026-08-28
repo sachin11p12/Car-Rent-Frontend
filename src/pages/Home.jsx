@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Search, Shield, Zap, Star } from 'lucide-react';
 import { CarGrid } from '@/components/car/CarGrid';
+import { HeroSearchWidget } from '@/components/home/HeroSearchWidget';
 import { carsData } from '@/data/cars';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -30,45 +31,24 @@ export const Home = () => {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto px-4 py-24">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Find Your Perfect
-              <span className="block text-blue-200">Ride Today</span>
-            </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Discover the perfect car for your journey. From economy to luxury,
-              we have vehicles for every adventure at unbeatable prices.
-            </p>
+      <section className="relative bg-linear-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
+        {/* Ambient subtle glow effects */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            {/* Search Bar */}
-            <div className="bg-white rounded-lg p-2 shadow-lg max-w-2xl mx-auto">
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="Where are you going?"
-                    className="w-full px-4 py-3 text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    className="px-4 py-3 text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <input
-                    type="date"
-                    className="px-4 py-3 text-gray-900 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                  <Search className="w-4 h-4 mr-2" />
-                  Search
-                </Button>
-              </div>
-            </div>
+        <div className="relative container mx-auto px-4 py-16 md:py-20">
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 text-white">
+              Rent Premium Cars <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-emerald-400">Across India</span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+              Choose from hundreds of verified sedans, luxury SUVs, and commercial vehicles with guaranteed best rates.
+            </p>
+          </div>
+
+          {/* Hero Search & Booking Widget */}
+          <div className="relative z-10">
+            <HeroSearchWidget />
           </div>
         </div>
       </section>
