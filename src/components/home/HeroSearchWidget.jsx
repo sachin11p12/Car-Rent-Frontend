@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { DualMonthCalendar } from './DualMonthCalendar';
+import { TimePickerWindow } from './TimePickerWindow';
 
 // Indian States and Union Territories
 export const INDIAN_STATES = [
@@ -87,14 +88,6 @@ const POPULAR_LOCATIONS = [
   { name: 'Kochi (Cochin International Airport)', type: 'Airport', state: 'Kerala' }
 ];
 
-// Time Slot Options (30-minute intervals)
-const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {
-  const hours = Math.floor(i / 2);
-  const minutes = i % 2 === 0 ? '00' : '30';
-  const hourStr = hours.toString().padStart(2, '0');
-  return `${hourStr}:${minutes}`;
-});
-
 export const HeroSearchWidget = () => {
   const navigate = useNavigate();
 
@@ -119,6 +112,9 @@ export const HeroSearchWidget = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [activeDateField, setActiveDateField] = useState('pickup'); // 'pickup' | 'return'
 
+  // 5-Slot Time Picker Window State ('pickup' | 'return' | null)
+  const [activeTimePicker, setActiveTimePicker] = useState(null);
+
   // Bottom Row Preferences (Age & State)
   const [driverAge, setDriverAge] = useState('26+');
   const [showAgeDropdown, setShowAgeDropdown] = useState(false);
@@ -130,6 +126,7 @@ export const HeroSearchWidget = () => {
   const locationRef = useRef(null);
   const returnLocationRef = useRef(null);
   const dateContainerRef = useRef(null);
+  const timeContainerRef = useRef(null);
   const ageRef = useRef(null);
   const stateRef = useRef(null);
   const ageListRef = useRef(null);
@@ -145,6 +142,7 @@ export const HeroSearchWidget = () => {
       }
       if (dateContainerRef.current && !dateContainerRef.current.contains(e.target)) {
         setShowCalendar(false);
+        setActiveTimePicker(null);
       }
       if (ageRef.current && !ageRef.current.contains(e.target)) {
         setShowAgeDropdown(false);
@@ -411,7 +409,7 @@ export const HeroSearchWidget = () => {
             </div>
           </div>
 
-          {/* Dates Section (Pickup + Return + 2-Month Dual Calendar Popup) */}
+          {/* Dates & Times Section */}
           <div 
             className={`${sameReturnLocation ? 'lg:col-span-6' : 'lg:col-span-12'} relative`} 
             ref={dateContainerRef}
@@ -423,42 +421,53 @@ export const HeroSearchWidget = () => {
                 <label className="block text-sm font-bold text-gray-900 mb-2">
                   Pickup date and time
                 </label>
-                <div 
-                  className={`flex items-center border-2 rounded-lg bg-white overflow-hidden transition-all ${
-                    showCalendar && activeDateField === 'pickup'
-                      ? 'border-green-600 ring-2 ring-green-100'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveDateField('pickup');
-                      setShowCalendar(true);
-                      setShowAgeDropdown(false);
-                      setShowStateDropdown(false);
-                    }}
-                    className="flex-1 flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
+                <div className="flex items-center gap-1.5">
+                  {/* Pickup Date Box */}
+                  <div
+                    className={`flex-1 border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                      showCalendar && activeDateField === 'pickup'
+                        ? 'border-green-600 ring-2 ring-green-100'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   >
-                    <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
-                    <span className="text-sm font-medium text-gray-900 truncate">
-                      {pickupDate ? format(pickupDate, 'MMM d, yyyy') : 'Pickup date'}
-                    </span>
-                  </button>
-
-                  <div className="relative w-24 shrink-0">
-                    <select
-                      value={pickupTime}
-                      onChange={(e) => setPickupTime(e.target.value)}
-                      className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveDateField('pickup');
+                        setShowCalendar(true);
+                        setActiveTimePicker(null);
+                        setShowAgeDropdown(false);
+                        setShowStateDropdown(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left transition-colors cursor-pointer"
                     >
-                      {TIME_SLOTS.map((slot) => (
-                        <option key={slot} value={slot}>
-                          {slot}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
+                      <span className="text-sm font-medium text-gray-900 truncate">
+                        {pickupDate ? format(pickupDate, 'MMM d, yyyy') : 'Pickup date'}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Pickup Time Box (with custom 5-slot window) */}
+                  <div
+                    className={`w-28 border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                      activeTimePicker === 'pickup'
+                        ? 'border-green-600 ring-2 ring-green-100'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTimePicker(activeTimePicker === 'pickup' ? null : 'pickup');
+                        setShowCalendar(false);
+                        setShowAgeDropdown(false);
+                        setShowStateDropdown(false);
+                      }}
+                      className="w-full py-3 px-3 text-center text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      {pickupTime || 'Time'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -468,42 +477,53 @@ export const HeroSearchWidget = () => {
                 <label className="block text-sm font-bold text-gray-900 mb-2">
                   Return date and time
                 </label>
-                <div 
-                  className={`flex items-center border-2 rounded-lg bg-white overflow-hidden transition-all ${
-                    showCalendar && activeDateField === 'return'
-                      ? 'border-green-600 ring-2 ring-green-100'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveDateField('return');
-                      setShowCalendar(true);
-                      setShowAgeDropdown(false);
-                      setShowStateDropdown(false);
-                    }}
-                    className="flex-1 flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left border-r border-gray-200 transition-colors cursor-pointer"
+                <div className="flex items-center gap-1.5">
+                  {/* Return Date Box */}
+                  <div
+                    className={`flex-1 border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                      showCalendar && activeDateField === 'return'
+                        ? 'border-green-600 ring-2 ring-green-100'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   >
-                    <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
-                    <span className="text-sm font-medium text-gray-900 truncate">
-                      {returnDate ? format(returnDate, 'MMM d, yyyy') : 'Return date'}
-                    </span>
-                  </button>
-
-                  <div className="relative w-24 shrink-0">
-                    <select
-                      value={returnTime}
-                      onChange={(e) => setReturnTime(e.target.value)}
-                      className="w-full text-sm font-medium text-gray-900 py-3 pl-2 pr-6 bg-transparent focus:outline-none cursor-pointer appearance-none"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveDateField('return');
+                        setShowCalendar(true);
+                        setActiveTimePicker(null);
+                        setShowAgeDropdown(false);
+                        setShowStateDropdown(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-3 hover:bg-gray-50 text-left transition-colors cursor-pointer"
                     >
-                      {TIME_SLOTS.map((slot) => (
-                        <option key={slot} value={slot}>
-                          {slot}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
+                      <span className="text-sm font-medium text-gray-900 truncate">
+                        {returnDate ? format(returnDate, 'MMM d, yyyy') : 'Return date'}
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Return Time Box (with custom 5-slot window) */}
+                  <div
+                    className={`w-28 border-2 rounded-lg bg-white overflow-hidden transition-all ${
+                      activeTimePicker === 'return'
+                        ? 'border-green-600 ring-2 ring-green-100'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTimePicker(activeTimePicker === 'return' ? null : 'return');
+                        setShowCalendar(false);
+                        setShowAgeDropdown(false);
+                        setShowStateDropdown(false);
+                      }}
+                      className="w-full py-3 px-3 text-center text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      {returnTime || 'Time'}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -532,6 +552,28 @@ export const HeroSearchWidget = () => {
               </div>
             )}
 
+            {/* 5-Slot Time Picker Floating Modal */}
+            {activeTimePicker && (
+              <div 
+                className={`absolute z-[100] top-full mt-2 w-full sm:w-[620px] ${
+                  activeTimePicker === 'return' ? 'sm:right-0 sm:left-auto' : 'sm:left-0 sm:right-auto'
+                }`}
+              >
+                <TimePickerWindow
+                  selectedTime={activeTimePicker === 'pickup' ? pickupTime : returnTime}
+                  onSelectTime={(time) => {
+                    if (activeTimePicker === 'pickup') {
+                      setPickupTime(time);
+                    } else {
+                      setReturnTime(time);
+                    }
+                    setActiveTimePicker(null);
+                  }}
+                  onClose={() => setActiveTimePicker(null)}
+                />
+              </div>
+            )}
+
           </div>
 
         </div>
@@ -550,6 +592,7 @@ export const HeroSearchWidget = () => {
                   setShowAgeDropdown(!showAgeDropdown);
                   setShowStateDropdown(false);
                   setShowCalendar(false);
+                  setActiveTimePicker(null);
                 }}
                 className="flex items-center gap-1 text-sm cursor-pointer group focus:outline-none select-none"
               >
@@ -598,6 +641,7 @@ export const HeroSearchWidget = () => {
                   setShowStateDropdown(!showStateDropdown);
                   setShowAgeDropdown(false);
                   setShowCalendar(false);
+                  setActiveTimePicker(null);
                 }}
                 className="flex items-center gap-1 text-sm cursor-pointer group focus:outline-none select-none"
               >
