@@ -186,7 +186,6 @@ export const HeroSearchWidget = () => {
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
       <div className="p-6 md:p-8 space-y-6">
-        
         {/* Row 1: Vehicle Type Selector */}
         <div>
           <label className="block text-sm font-bold text-gray-900 mb-2">
@@ -195,11 +194,11 @@ export const HeroSearchWidget = () => {
           <div className="inline-flex rounded-lg border border-gray-300 p-1 bg-gray-50/80">
             <button
               type="button"
-              onClick={() => setVehicleType('Cars')}
+              onClick={() => setVehicleType("Cars")}
               className={`flex items-center gap-2.5 px-5 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
-                vehicleType === 'Cars'
-                  ? 'bg-green-700 text-white shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-200/70'
+                vehicleType === "Cars"
+                  ? "bg-green-700 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-200/70"
               }`}
             >
               <Car className="w-5 h-5" />
@@ -208,11 +207,11 @@ export const HeroSearchWidget = () => {
 
             <button
               type="button"
-              onClick={() => setVehicleType('Vans & Trucks')}
+              onClick={() => setVehicleType("Vans & Trucks")}
               className={`flex items-center gap-2.5 px-5 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${
-                vehicleType === 'Vans & Trucks'
-                  ? 'bg-green-700 text-white shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-200/70'
+                vehicleType === "Vans & Trucks"
+                  ? "bg-green-700 text-white shadow-sm"
+                  : "text-gray-700 hover:bg-gray-200/70"
               }`}
             >
               <Truck className="w-5 h-5" />
@@ -223,14 +222,15 @@ export const HeroSearchWidget = () => {
 
         {/* Row 2: Location and Date/Time Fields */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          
           {/* Pickup and Return Location Box */}
-          <div className={`${sameReturnLocation ? 'lg:col-span-6' : 'lg:col-span-12'} transition-all`}>
+          <div
+            className={`${sameReturnLocation ? "lg:col-span-6" : "lg:col-span-12"} transition-all`}
+          >
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-bold text-gray-900">
                 Pickup and return location
               </label>
-              
+
               {/* Same Return Location Checkbox */}
               <label className="flex items-center gap-1.5 text-xs text-gray-700 cursor-pointer select-none">
                 <input
@@ -239,21 +239,27 @@ export const HeroSearchWidget = () => {
                   onChange={(e) => setSameReturnLocation(e.target.checked)}
                   className="w-4 h-4 text-green-700 rounded border-gray-300 focus:ring-green-600 accent-green-700"
                 />
-                <span className="font-medium text-gray-700">Same return location</span>
+                <span className="font-medium text-gray-700">
+                  Same return location
+                </span>
               </label>
             </div>
 
-            <div className={`grid ${sameReturnLocation ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-3`}>
+            <div
+              className={`grid ${sameReturnLocation ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"} gap-3`}
+            >
               {/* Main Pickup Location Input */}
               <div className="relative" ref={locationRef}>
                 <div
                   className={`flex items-center border-2 rounded-lg px-3.5 py-3 bg-white transition-colors ${
                     locationError
-                      ? 'border-red-500 ring-2 ring-red-100'
-                      : 'border-gray-300 hover:border-gray-400 focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100'
+                      ? "border-red-500 ring-2 ring-red-100"
+                      : "border-gray-300 hover:border-gray-400 focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100"
                   }`}
                 >
-                  <MapPin className={`w-5 h-5 mr-2.5 shrink-0 ${locationError ? 'text-red-500' : 'text-red-600'}`} />
+                  <MapPin
+                    className={`w-5 h-5 mr-2.5 shrink-0 ${locationError ? "text-red-500" : "text-red-600"}`}
+                  />
                   <input
                     type="text"
                     value={pickupLocation}
@@ -269,7 +275,7 @@ export const HeroSearchWidget = () => {
                   {pickupLocation && (
                     <button
                       type="button"
-                      onClick={() => setPickupLocation('')}
+                      onClick={() => setPickupLocation("")}
                       className="p-1 text-gray-400 hover:text-gray-600 rounded"
                     >
                       <X className="w-4 h-4" />
@@ -304,8 +310,12 @@ export const HeroSearchWidget = () => {
                           <div className="flex items-center gap-2.5">
                             <MapPin className="w-4 h-4 text-red-500 shrink-0" />
                             <div>
-                              <p className="font-semibold text-gray-900 text-sm">{loc.name}</p>
-                              <p className="text-xs text-gray-500">{loc.type} • {loc.state}</p>
+                              <p className="font-semibold text-gray-900 text-sm">
+                                {loc.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {loc.type} • {loc.state}
+                              </p>
                             </div>
                           </div>
                           <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-medium">
@@ -315,7 +325,8 @@ export const HeroSearchWidget = () => {
                       ))
                     ) : (
                       <div className="px-3.5 py-3 text-sm text-gray-500 text-center">
-                        No locations found for "{pickupLocation}". You can continue with this custom address.
+                        No locations found for "{pickupLocation}". You can
+                        continue with this custom address.
                       </div>
                     )}
                   </div>
@@ -341,7 +352,7 @@ export const HeroSearchWidget = () => {
                     {returnLocation && (
                       <button
                         type="button"
-                        onClick={() => setReturnLocation('')}
+                        onClick={() => setReturnLocation("")}
                         className="p-1 text-gray-400 hover:text-gray-600 rounded"
                       >
                         <X className="w-4 h-4" />
@@ -367,8 +378,12 @@ export const HeroSearchWidget = () => {
                           <div className="flex items-center gap-2.5">
                             <MapPin className="w-4 h-4 text-gray-500 shrink-0" />
                             <div>
-                              <p className="font-semibold text-gray-900 text-sm">{loc.name}</p>
-                              <p className="text-xs text-gray-500">{loc.type} • {loc.state}</p>
+                              <p className="font-semibold text-gray-900 text-sm">
+                                {loc.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {loc.type} • {loc.state}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -381,14 +396,18 @@ export const HeroSearchWidget = () => {
           </div>
 
           {/* Pickup Date and Time Box */}
-          <div className={`${sameReturnLocation ? 'lg:col-span-3' : 'lg:col-span-6'}`}>
+          <div
+            className={`${sameReturnLocation ? "lg:col-span-3" : "lg:col-span-6"}`}
+          >
             <label className="block text-sm font-bold text-gray-900 mb-2">
               Pickup date and time
             </label>
             <div className="flex items-center border-2 border-gray-300 rounded-lg bg-white overflow-hidden focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100">
-              
               {/* Date Part with Popover */}
-              <Popover open={pickupCalendarOpen} onOpenChange={setPickupCalendarOpen}>
+              <Popover
+                open={pickupCalendarOpen}
+                onOpenChange={setPickupCalendarOpen}
+              >
                 <PopoverTrigger asChild>
                   <button
                     type="button"
@@ -396,11 +415,16 @@ export const HeroSearchWidget = () => {
                   >
                     <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
                     <span className="text-sm font-medium text-gray-900 truncate">
-                      {pickupDate ? format(pickupDate, 'MMM d, yyyy') : 'Pickup date'}
+                      {pickupDate
+                        ? format(pickupDate, "MMM d, yyyy")
+                        : "Pickup date"}
                     </span>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50 bg-white" align="start">
+                <PopoverContent
+                  className="w-auto p-0 z-50 bg-white"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={pickupDate}
@@ -439,14 +463,18 @@ export const HeroSearchWidget = () => {
           </div>
 
           {/* Return Date and Time Box */}
-          <div className={`${sameReturnLocation ? 'lg:col-span-3' : 'lg:col-span-6'}`}>
+          <div
+            className={`${sameReturnLocation ? "lg:col-span-3" : "lg:col-span-6"}`}
+          >
             <label className="block text-sm font-bold text-gray-900 mb-2">
               Return date and time
             </label>
             <div className="flex items-center border-2 border-gray-300 rounded-lg bg-white overflow-hidden focus-within:border-green-600 focus-within:ring-2 focus-within:ring-green-100">
-              
               {/* Return Date Part with Popover */}
-              <Popover open={returnCalendarOpen} onOpenChange={setReturnCalendarOpen}>
+              <Popover
+                open={returnCalendarOpen}
+                onOpenChange={setReturnCalendarOpen}
+              >
                 <PopoverTrigger asChild>
                   <button
                     type="button"
@@ -454,11 +482,16 @@ export const HeroSearchWidget = () => {
                   >
                     <CalendarIcon className="w-5 h-5 text-green-700 shrink-0" />
                     <span className="text-sm font-medium text-gray-900 truncate">
-                      {returnDate ? format(returnDate, 'MMM d, yyyy') : 'Return date'}
+                      {returnDate
+                        ? format(returnDate, "MMM d, yyyy")
+                        : "Return date"}
                     </span>
                   </button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-50 bg-white" align="start">
+                <PopoverContent
+                  className="w-auto p-0 z-50 bg-white"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={returnDate}
@@ -491,15 +524,12 @@ export const HeroSearchWidget = () => {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Row 3: Age, Indian State, Negotiated Rate, Search Button */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2 border-t border-gray-100">
-          
           {/* Left Controls: Age & Indian State Dropdowns */}
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-            
             {/* Age Selector Dropdown (18 to 100) */}
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-gray-700">I am</span>
@@ -512,7 +542,7 @@ export const HeroSearchWidget = () => {
                   <option value="26+">26+</option>
                   {Array.from({ length: 83 }, (_, i) => 18 + i).map((age) => (
                     <option key={age} value={age.toString()}>
-                      {age} {age === 26 ? '(26+)' : ''}
+                      {age} {age === 26 ? "(26+)" : ""}
                     </option>
                   ))}
                 </select>
@@ -522,7 +552,9 @@ export const HeroSearchWidget = () => {
 
             {/* Indian State Dropdown */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">I live in</span>
+              <span className="text-sm font-medium text-gray-700">
+                I live in
+              </span>
               <div className="relative inline-block max-w-[200px]">
                 <select
                   value={selectedState}
@@ -539,8 +571,6 @@ export const HeroSearchWidget = () => {
               </div>
             </div>
           </div>
-
-          {/* Right Action: Search CTA Button */}
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -567,13 +597,12 @@ export const HeroSearchWidget = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate('/cars?discount=20')}
+          onClick={() => navigate("/cars?discount=20")}
           className="text-amber-300 hover:text-amber-200 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
         >
           Book now
         </button>
       </div>
-
     </div>
   );
 };
