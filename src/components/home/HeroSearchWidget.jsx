@@ -657,38 +657,6 @@ export const HeroSearchWidget = () => {
                 </div>
               )}
             </div>
-
-            {/* 3. Negotiated Rate Checkbox */}
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={hasNegotiatedRate}
-                  onChange={(e) => setHasNegotiatedRate(e.target.checked)}
-                  className="w-4 h-4 text-green-700 rounded border-gray-300 focus:ring-green-600 accent-green-700"
-                />
-                <span>I have a <strong className="font-semibold text-gray-900">negotiated rate</strong></span>
-              </label>
-
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowInfoTooltip(!showInfoTooltip)}
-                  onMouseEnter={() => setShowInfoTooltip(true)}
-                  onMouseLeave={() => setShowInfoTooltip(false)}
-                  className="text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
-                  aria-label="Information about negotiated rates"
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                {showInfoTooltip && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2.5 bg-gray-900 text-white text-xs rounded-md shadow-xl z-50">
-                    Enter your corporate, club membership, or customer loyalty discount code to unlock contract rates.
-                  </div>
-                )}
-              </div>
-            </div>
-
           </div>
 
           {/* Right Action: Search CTA Button */}
